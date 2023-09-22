@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Musik Player</title>
+    <meta charset="UTF-8">
+    <title>Musikly</title>
+
+    <!--React-->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <!--Noto Sans-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +17,7 @@
     <!--Material Icons-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+    <!--CSS-->
     <style>
         body{
             font-family: 'Noto Sans', sans-serif;
@@ -191,161 +196,7 @@
     </style>
 </head>
 <body>
-    <div class="scene" id="">
-        <div id="startup">
-            <img class="startup-logo" style="" src="logo.svg"/>
-            <img class="startup-logo" style="animation-name:down" src="logo.svg"/>
-            <img class="startup-logo" style="" src="logo.svg"/>
-            <img class="startup-logo" style="animation-name:down" src="logo.svg"/>
-        </div>
-    </div>
-    <div class="scene">
-        <div id="main-page">
-            <div id="playlists-subsection">
-                <div id="playlist-glassmorphism">
-                    <span style="display:flex;justify-content: space-between;align-items: center;gap:25px;">
-                        <h2>Playlists</h2>
-                        <button class="new-button">
-                            <span class="material-symbols-outlined" style="">add</span>
-                            New
-                        </button>
-                    </span>
-                    <div id="playlist-container">
-                        <div class="playlist">
-                            <div>
-                                Happy
-                            </div>
-                            <div>
-                                <span class="material-symbols-outlined" style="">play_circle</span>
-                                <span class="material-symbols-outlined">edit</span>
-                                <span class="material-symbols-outlined">delete_forever</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="logo-subsection" style="position: sticky;">
-                <img src="logo.svg">
-                <span>Musikly is a small app made by Liftoff-Studios so that he could enjoy listening to music without wasting internet :))</span>
-            </div>
-        </div>
-    </div>
-
-    <!--Dialog-->
-    <div id="dialog-container">
-        <dialog id="song-edit-bar" open>
-            <span>
-                Rename Playlist: <input/>
-            </span>
-            <span>
-                Add Songs
-                <div id="song-add-list">
-
-                </div>
-            </span>
-            <span>
-                Remove Songs
-                <div id="song-remove-list">
-
-                </div>
-            </span>
-            <span>
-                <button onclick="closeEditDialog()">Close</button>
-            </span>
-        </dialog>
-    </div>
-
-    <script>
-        let d = document.getElementsByClassName("scene");
-        let changePage = e=>{
-            for(let i = 0; i<d.length;i++){
-                d[i].style.display = "none";
-            }
-            d[e].style.display="initial"
-        }
-
-        changePage(0);
-        setTimeout(()=>{
-            changePage(1);
-        },2000)
-    </script>
-    <script>
-        let playlists = [];
-        // access the pre-bundled global API functions
-        const { invoke } = window.__TAURI__.tauri;
-        invoke('get_json_file').then((d)=>{
-
-            playlists = JSON.parse(d).playlists;
-            let playListContainer = document.getElementById("playlist-container");
-            for(let i = 0;i<playlists.length;i++){
-                playlists[i][1] = playlists[i][1].sort(() => Math.random() - 0.5);
-                playListContainer.innerHTML += `
-                    <div class="playlist" id="playlist-${playlists[i][0]}">
-                        <div>
-                                ${playlists[i][0]}
-                        </div>
-                        <div>
-                            <span class="material-symbols-outlined" onclick="playPlayList('${playlists[i][0]}')">play_circle</span>
-                            <span class="material-symbols-outlined" onclick="openEditDialog('${playlists[i][0]}')">edit</span>
-                            <span class="material-symbols-outlined">delete_forever</span>
-                        </div>
-                    </div>
-                `
-            }
-        })
-
-        //Plays Playlist
-        let playPlayList = (id)=>{
-            for(let i =0; i<playlists.length;i++){
-                if(playlists[i][0]==id){
-                    invoke("play_music", {name:playlists[i][1]})
-                }
-            }
-        }
-
-        //Close Song Dialog
-        let closeEditDialog = ()=>{
-            document.getElementById("dialog-container").style.zIndex = -3;
-        }
-
-        let openEditDialog = (playList)=>{
-            let songAddContainer = document.getElementById("song-add-list");
-            let songRemoveContainer = document.getElementById("song-remove-list");
-
-            //Clearing the Dialog
-            songAddContainer.innerHTML = "";
-            songRemoveContainer.innerHTML = "";
-
-            let songs = [];
-            let notInPlaylist = [];
-            document.getElementById("dialog-container").style.zIndex = 3;
-            for(let i = 0;i<playlists.length;i++){
-                if(playlists[i][0]==playList){
-                    songs = playlists[i][1];
-                }
-            }
-
-            for (i in songs){
-                songRemoveContainer.innerHTML += `
-                <div>
-                ${songs[i]}
-                </div>
-                `
-            }
-
-            invoke("get_song_lists").then((res)=>{
-                for(let i = 0; i<res.length;i++){
-                    if(!songs.includes(res[i])){
-                        notInPlaylist.push(res[i]);
-                        songAddContainer.innerHTML += `
-                        <div>
-                        ${res[i]}
-                        </div>
-                        `
-                    }
-                }
-            })
-        }
-    </script>
+    <div id="app"></div>
+    <script src="script.js" type="text/babel"/>
 </body>
 </html>
