@@ -201,7 +201,7 @@ function MainScene(){
                                 return <div key={i} style={{border:"1px black solid"}}>
                                     <span >{e}</span>
                                     <span onClick={()=>addSong(e,currentAddRemove[2])} className={"material-symbols-outlined"}>add</span>
-                                </div>
+                                 </div>
                             })
                         }
                     </div>
