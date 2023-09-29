@@ -20,7 +20,7 @@ fn main() {
   json_exists(&get_my_home().unwrap().unwrap().as_path().join("Music").join("Playlists"));
   tauri::Builder::default()
     .manage(ApplicationState(sink, String::from(get_my_home().unwrap().unwrap().as_path().join("Music").join("Playlists").to_str().unwrap())))
-    .invoke_handler(tauri::generate_handler![play_music, toggle_music, song_over,get_json_file,get_song_lists])
+    .invoke_handler(tauri::generate_handler![play_music, toggle_music, song_over,get_json_file,get_song_lists,update_json_file])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
@@ -102,4 +102,11 @@ fn get_song_lists(state: tauri::State<ApplicationState>)->Vec<String>{
     }
   }
   return songs;
+}
+
+
+#[tauri::command]
+fn update_json_file(state: tauri::State<ApplicationState>, data: String){
+    println!("{:#?}", data);
+    fs::write(Path::new(state.1.as_str()).join("musikly_config.json"), data.as_bytes()).unwrap()
 }
