@@ -29,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "liftoff-studios.musikly",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
